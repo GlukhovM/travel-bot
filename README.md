@@ -1,1 +1,1 @@
-# travel-bot
+# Travel bot pet project
