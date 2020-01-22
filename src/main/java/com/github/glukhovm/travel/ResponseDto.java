@@ -3,41 +3,39 @@ package com.github.glukhovm.travel;
 import java.util.Arrays;
 import java.util.List;
 
-public class testDto {
-    private List<subData> data;
+public class ResponseDto {
+    private List<Options> data;
 
-    public testDto() {
+    public ResponseDto() {
     }
 
-    public testDto(List<subData> data) {
+    public ResponseDto(List<Options> data) {
         this.data = data;
     }
 
-    public List<subData> getData() {
+    public List<Options> getData() {
         return data;
     }
 
-    public void setData(List<subData> data) {
+    public void setData(List<Options> data) {
         this.data = data;
     }
 
     @Override
     public String toString() {
-        return "testDto{" +
-                "data=" + data +
-                '}';
+        return "ResponseDto= " + data;
     }
 
-    public static class subData{
+    public static class Options {
         private int price;
         private int dTime;
         private String fly_duration;
         private String[] airlines;
 
-        public subData() {
+        public Options() {
         }
 
-        public subData(int price, int dTime, String fly_duration, String[] airlines) {
+        public Options(int price, int dTime, String fly_duration, String[] airlines) {
             this.price = price;
             this.dTime = dTime;
             this.fly_duration = fly_duration;
@@ -78,12 +76,10 @@ public class testDto {
 
         @Override
         public String toString() {
-            return "subData{" +
-                    "price=" + price +
+            return '{' + "price=" + price +
                     ", dTime=" + dTime +
-                    ", fly_duration='" + fly_duration + '\'' +
-                    ", airlines=" + Arrays.toString(airlines) +
-                    '}';
+                    ", fly_duration=" + fly_duration +
+                    ", airlines=" + Arrays.toString(airlines) + '}' + "\n";
         }
     }
     }
