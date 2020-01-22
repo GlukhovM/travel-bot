@@ -82,7 +82,7 @@ public class ResponseDto {
                     ", airlines=" + Arrays.toString(airlines) + '}' + "\n";
         }
     }
-    }
+}
 
 
 

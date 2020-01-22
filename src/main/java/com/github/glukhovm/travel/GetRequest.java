@@ -9,6 +9,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 
+import java.nio.charset.StandardCharsets;
+
 public class GetRequest {
     private static String requestURL = "https://api.skypicker.com/flights?fly_from=CEK&fly_to=LED&date_from=01/06/2020&date_to=01/07/2020&partner=picky&curr=RUB&limit=3";
 
@@ -18,13 +20,13 @@ public class GetRequest {
                 CloseableHttpResponse response = client.execute(new HttpGet(requestURL))
         ) {
             HttpEntity entity = response.getEntity();
-            if(response.getStatusLine().getStatusCode() != 200){
-                System.out.println("Oh no, Error: " + response.getStatusLine().toString() + "\n" + IOUtils.toString(entity.getContent(), "cp1251"));
+            if (response.getStatusLine().getStatusCode() != 200) {
+                System.out.println("Oh no, Error: " + response.getStatusLine().toString() + "\n" + IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
             } else {
-                System.out.println("Status line: " + response.getStatusLine());
+                //System.out.println("Status line: " + response.getStatusLine()); // do not output
                 if (entity != null) {
-                    String data = IOUtils.toString(entity.getContent(), "cp1251");
-                    System.out.println("Data :" + data);
+                    String data = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
+                    //System.out.println("Data :" + data); // do not output
 
                     ObjectMapper objectMapper = new ObjectMapper();
                     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -33,8 +35,8 @@ public class GetRequest {
                     System.out.println(ResponseDto);
                 }
             }
-        } catch (Throwable cause) {
-          cause.printStackTrace();
+        } catch (Exception cause) {
+            cause.printStackTrace();
         }
     }
 }
