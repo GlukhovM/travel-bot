@@ -20,20 +20,18 @@ public class GetRequest {
                 CloseableHttpResponse response = client.execute(new HttpGet(requestURL))
         ) {
             HttpEntity entity = response.getEntity();
-            if (response.getStatusLine().getStatusCode() != 200) {
-                System.out.println("Oh no, Error: " + response.getStatusLine().toString() + "\n" + IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
-            } else {
-                //System.out.println("Status line: " + response.getStatusLine()); // do not output
+            if (response.getStatusLine().getStatusCode() == 200) {
                 if (entity != null) {
                     String data = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
-                    //System.out.println("Data :" + data); // do not output
 
                     ObjectMapper objectMapper = new ObjectMapper();
                     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-                    ResponseDto ResponseDto = objectMapper.readValue(data, ResponseDto.class);
-                    System.out.println(ResponseDto);
+                    ResponseDto responseDto = objectMapper.readValue(data, ResponseDto.class);
+                    System.out.println(responseDto);
                 }
+            } else {
+                System.out.println("Oh no, Error: " + response.getStatusLine().toString() + "\n" + IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
             }
         } catch (Exception cause) {
             cause.printStackTrace();
