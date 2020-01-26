@@ -1,8 +1,8 @@
 package com.github.glukhovm.travel;
 
-import java.util.Arrays;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
-import java.util.Map;
 
 public class ResponseDto {
     private List<OptionDto> data;
@@ -34,22 +34,23 @@ public class ResponseDto {
 
     @Override
     public String toString() {
-        return "ResponseDto= " + data;
+        return "Options= " + data + ", Currency= " + currency;
     }
 
     public static class OptionDto {
         private int price;
         private long dTime;
-        private String fly_duration;
+        @JsonProperty(value = "fly_duration")
+        private String flyDuration;
         private List<String> airlines;
 
         public OptionDto() {
         }
 
-        public OptionDto(int price, long dTime, String fly_duration, List<String> airlines) {
+        public OptionDto(int price, long dTime, String flyDuration, List<String> airlines) {
             this.price = price;
             this.dTime = dTime;
-            this.fly_duration = fly_duration;
+            this.flyDuration = flyDuration;
             this.airlines = airlines;
         }
 
@@ -63,18 +64,18 @@ public class ResponseDto {
 
         public long getdTime() {
             return dTime;
-        }
+        } // if you call this getter "getDTime" it return "0"
 
-        public void setdTime(long dTime) {
+        public void setDTime(long dTime) {
             this.dTime = dTime;
         }
 
-        public String getFly_duration() {
-            return fly_duration;
+        public String getFlyDuration() {
+            return flyDuration;
         }
 
-        public void setFly_duration(String fly_duration) {
-            this.fly_duration = fly_duration;
+        public void setFlyDuration(String flyDuration) {
+            this.flyDuration = flyDuration;
         }
 
         public List<String> getAirlines() {
@@ -87,12 +88,11 @@ public class ResponseDto {
 
         @Override
         public String toString() {
-            return '{' + "price=" + price + " RUB" +
+            return '{' + "price=" + price +
                     ", dTime=" + dTime +
-                    ", fly_duration=" + fly_duration +
+                    ", flyDuration=" + flyDuration +
                     ", airlines=" + airlines + '}' + "\n";
         }
-
     }
 }
 
