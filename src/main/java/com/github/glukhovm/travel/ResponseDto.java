@@ -40,7 +40,7 @@ public class ResponseDto {
     public static class OptionDto {
         private int price;
         private long dTime;
-        @JsonProperty(value = "fly_duration")
+        @JsonProperty("fly_duration")
         private String flyDuration;
         private List<String> airlines;
 
@@ -62,9 +62,10 @@ public class ResponseDto {
             this.price = price;
         }
 
-        public long getdTime() {
+        @JsonProperty("dTime")
+        public long getDTime() {
             return dTime;
-        } // if you call this getter "getDTime" it return "0"
+        }
 
         public void setDTime(long dTime) {
             this.dTime = dTime;
