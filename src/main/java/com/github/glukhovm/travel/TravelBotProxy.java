@@ -1,0 +1,103 @@
+package com.github.glukhovm.travel;
+
+import org.telegram.abilitybots.api.bot.AbilityBot;
+import org.telegram.abilitybots.api.objects.Ability;
+import org.telegram.telegrambots.ApiContextInitializer;
+import org.telegram.telegrambots.bots.DefaultBotOptions;
+import org.telegram.telegrambots.meta.ApiContext;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import static org.telegram.abilitybots.api.objects.Locality.ALL;
+import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
+
+
+public class TravelBotProxy extends AbilityBot {
+
+    protected TravelBotProxy(String botToken, String botUsername, DefaultBotOptions botOptions) {
+        super(botToken, botUsername, botOptions);
+    }
+
+    public int creatorId() {
+        return 0;
+    }
+
+    public Ability pingPong() {
+        return Ability
+                .builder()
+                .name("ping")
+                .info("ping pong")
+                .locality(ALL)
+                .privacy(PUBLIC)
+                .action(ctx -> silent.send("pong", ctx.chatId()))
+                .build();
+    }
+
+    private static String BOT_NAME = "travel_flight_bot";
+    private static String BOT_TOKEN = "688895841:AAHuM39QsEuAqlY9LZu4JsFxkRdY2HnJrxM";
+
+    private static String PROXY_HOST = "138.68.161.60";
+    private static Integer PROXY_PORT = 1080;
+
+    public static void main(String[] args) {
+        try {
+            ApiContextInitializer.init();
+            // Create the TelegramBotsApi object to register your bots
+            TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
+            // Set up Http proxy
+            DefaultBotOptions botOptions = ApiContext.getInstance(DefaultBotOptions.class);
+            botOptions.setProxyHost(PROXY_HOST);
+            botOptions.setProxyPort(PROXY_PORT);
+            // Select proxy type: [HTTP|SOCKS4|SOCKS5] (default: NO_PROXY)
+            botOptions.setProxyType(DefaultBotOptions.ProxyType.SOCKS4);
+
+            // Register your newly created AbilityBot
+            TravelBotProxy bot = new TravelBotProxy(BOT_TOKEN, BOT_NAME, botOptions);
+            telegramBotsApi.registerBot(bot);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMsg(Message message, String text) {
+        SendMessage sendMessage = new SendMessage()
+                .enableMarkdown(true)
+                .setChatId(message.getChatId())
+                .setReplyToMessageId(message.getMessageId())
+                .setText(text);
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onUpdateReceived(Update update) {
+        Message message = update.getMessage();
+        if (update.hasMessage() && update.getMessage().hasText()) {
+            switch (message.getText()) {
+                case "Привет":
+                    sendMsg(message, "Привет тебе странник!");
+                    break;
+                case "Добрейший вечерочек":
+                    sendMsg(message, "Вам того же!");
+                    break;
+                default:
+            }
+        }
+    }
+
+    @Override
+    public String getBotUsername() {
+        return "travel_flight_bot";
+    }
+
+    @Override
+    public String getBotToken() {
+        return "688895841:AAHuM39QsEuAqlY9LZu4JsFxkRdY2HnJrxM";
+    }
+}
