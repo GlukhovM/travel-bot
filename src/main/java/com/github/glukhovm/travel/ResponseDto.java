@@ -39,6 +39,7 @@ public class ResponseDto {
 
     public static class OptionDto {
         private int price;
+        @JsonProperty("dTime")
         private long dTime;
         @JsonProperty("fly_duration")
         private String flyDuration;
@@ -62,7 +63,6 @@ public class ResponseDto {
             this.price = price;
         }
 
-        @JsonProperty("dTime")
         public long getDTime() {
             return dTime;
         }
