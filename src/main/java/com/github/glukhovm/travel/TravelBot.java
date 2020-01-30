@@ -39,13 +39,14 @@ public class TravelBot extends TelegramLongPollingBot {
         Message message = update.getMessage();
         if (update.hasMessage() && update.getMessage().hasText()) {
             switch (message.getText()) {
-                case "Привет":
-                    sendMsg(message, "Привет тебе странник!");
+                case "Hello":
+                    sendMsg(message, "Fuck you");
                     break;
-                case "Добрейший вечерочек":
-                    sendMsg(message, "Вам того же!");
+                case "Good evening":
+                    sendMsg(message, "Suck my dick");
                     break;
                 default:
+                    sendMsg(message, "gtfo sucker");
             }
         }
     }

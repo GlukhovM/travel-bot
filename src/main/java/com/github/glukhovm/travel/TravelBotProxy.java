@@ -1,7 +1,6 @@
 package com.github.glukhovm.travel;
 
 import org.telegram.abilitybots.api.bot.AbilityBot;
-import org.telegram.abilitybots.api.objects.Ability;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.meta.ApiContext;
@@ -10,9 +9,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import static org.telegram.abilitybots.api.objects.Locality.ALL;
-import static org.telegram.abilitybots.api.objects.Privacy.PUBLIC;
 
 
 public class TravelBotProxy extends AbilityBot {
@@ -25,22 +21,12 @@ public class TravelBotProxy extends AbilityBot {
         return 0;
     }
 
-    public Ability pingPong() {
-        return Ability
-                .builder()
-                .name("ping")
-                .info("ping pong")
-                .locality(ALL)
-                .privacy(PUBLIC)
-                .action(ctx -> silent.send("pong", ctx.chatId()))
-                .build();
-    }
 
     private static String BOT_NAME = "travel_flight_bot";
     private static String BOT_TOKEN = "688895841:AAHuM39QsEuAqlY9LZu4JsFxkRdY2HnJrxM";
 
-    private static String PROXY_HOST = "138.68.161.60";
-    private static Integer PROXY_PORT = 1080;
+    private static String PROXY_HOST = "103.216.82.18";
+    private static Integer PROXY_PORT = 6667;
 
     public static void main(String[] args) {
         try {
@@ -80,13 +66,14 @@ public class TravelBotProxy extends AbilityBot {
         Message message = update.getMessage();
         if (update.hasMessage() && update.getMessage().hasText()) {
             switch (message.getText()) {
-                case "Привет":
-                    sendMsg(message, "Привет тебе странник!");
+                case "Hello":
+                    sendMsg(message, "Fuck you");
                     break;
-                case "Добрейший вечерочек":
-                    sendMsg(message, "Вам того же!");
+                case "Good evening":
+                    sendMsg(message, "Suck my dick");
                     break;
                 default:
+                    sendMsg(message, "gtfo sucker");
             }
         }
     }
