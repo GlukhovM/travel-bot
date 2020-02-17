@@ -28,13 +28,13 @@ public class GetRequest {
                     ResponseDto responseDto = objectMapper.readValue(entity.getContent(), ResponseDto.class);
                     System.out.println(responseDto);
                 } else {
-                    System.out.println("Entity is null");
+                    System.out.println(response.getStatusLine());
                 }
             } else {
                 if (entity != null) {
-                    System.out.println("Oh no, Error: " + response.getStatusLine().toString() + "\n" + IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
+                    System.out.println("Oh no, Error: " + response.getStatusLine() + "\n" + IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
                 } else {
-                    System.out.println("Entity is null");
+                    System.out.println(response.getStatusLine());
                 }
             }
         } catch (Exception cause) {
