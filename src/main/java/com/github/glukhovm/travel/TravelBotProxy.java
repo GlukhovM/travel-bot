@@ -10,7 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-
+//VPN ip 3.12.230.51
 public class TravelBotProxy extends AbilityBot {
 
     protected TravelBotProxy(String botToken, String botUsername, DefaultBotOptions botOptions) {

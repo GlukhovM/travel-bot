@@ -19,3 +19,4 @@ dependencies {
     compile group: 'org.telegram', name: 'telegrambots-abilities', version: '4.6'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-logging', version: '2.2.4.RELEASE'
 }
+
