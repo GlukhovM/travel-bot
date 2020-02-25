@@ -7,6 +7,9 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
 repositories {
     mavenCentral()
 }
@@ -18,5 +21,6 @@ dependencies {
     compile group: 'org.telegram', name: 'telegrambots', version: '4.6'
     compile group: 'org.telegram', name: 'telegrambots-abilities', version: '4.6'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-logging', version: '2.2.4.RELEASE'
+    compile group: 'org.telegram', name: 'telegrambots-chat-session-bot', version: '4.6'
 }
 
