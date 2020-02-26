@@ -20,7 +20,7 @@ public class TravelBotSession extends TelegramLongPollingSessionBot {
         ApiContextInitializer.init();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
         try {
-            telegramBotsApi.registerBot(new TravelBot());
+            telegramBotsApi.registerBot(new TravelBotSession());
         } catch (TelegramApiRequestException e) {
             e.printStackTrace();
         }
