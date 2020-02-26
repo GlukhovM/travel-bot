@@ -1,5 +1,6 @@
 package com.github.glukhovm.travel;
 
+import com.github.glukhovm.travel.configuration.BotProperties;
 import org.apache.shiro.session.Session;
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -10,17 +11,24 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.session.TelegramLongPollingSessionBot;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
-import static com.github.glukhovm.travel.ThirdScenario.inputHandler;
-
 public class TravelBotSession extends TelegramLongPollingSessionBot {
+    private final BotProperties properties;
 
-    public static void main(String[] args) {
+    public TravelBotSession(BotProperties properties){
+        this.properties = properties;
+    }
+
+    public static void main(String[] args) throws IOException {
+        final String file = TravelBotSession.class.getClassLoader().getResource("bot.properties").getFile();
+        final BotProperties botProperties = new BotProperties(new File(file));
         ApiContextInitializer.init();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
         try {
-            telegramBotsApi.registerBot(new TravelBotSession());
+            telegramBotsApi.registerBot(new TravelBotSession(botProperties));
         } catch (TelegramApiRequestException e) {
             e.printStackTrace();
         }
@@ -30,12 +38,9 @@ public class TravelBotSession extends TelegramLongPollingSessionBot {
         SendMessage sendMessage = new SendMessage()
                 .enableMarkdown(true)
                 .setChatId(message.getChatId())
-                //.setReplyToMessageId(message.getMessageId())
+                .setReplyToMessageId(message.getMessageId())
                 .setText(text);
         try {
-            /*if (message.getText().equals("/start")) {
-                setButtons(sendMessage);
-            }*/
             execute(sendMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
@@ -45,19 +50,19 @@ public class TravelBotSession extends TelegramLongPollingSessionBot {
 
     @Override
     public void onUpdateReceived(Update update, Optional<Session> botSession) {
-            Message message = update.getMessage();
-            String text = message.getText();
-            sendMsg(message, text);
+        Message message = update.getMessage();
+        String text = message.getText();
+        sendMsg(message, text);
     }
 
 
     @Override
     public String getBotUsername() {
-        return BotConfig.MYBOTNAME;
+        return properties.getName();
     }
 
     @Override
     public String getBotToken() {
-        return BotConfig.MYBOTTOKEN;
+        return properties.getToken();
     }
 }
