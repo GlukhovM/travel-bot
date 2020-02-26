@@ -1,4 +1,4 @@
-package com.github.glukhovm.travel;
+package useless;
 
 import org.telegram.abilitybots.api.bot.AbilityBot;
 import org.telegram.telegrambots.ApiContextInitializer;
@@ -80,11 +80,11 @@ public class TravelBotProxy extends AbilityBot {
 
     @Override
     public String getBotUsername() {
-        return "travel_flight_bot";
+        return null;
     }
 
     @Override
     public String getBotToken() {
-        return "688895841:AAHuM39QsEuAqlY9LZu4JsFxkRdY2HnJrxM";
+        return null;
     }
 }

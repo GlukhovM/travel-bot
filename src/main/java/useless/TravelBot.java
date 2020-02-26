@@ -1,4 +1,4 @@
-package com.github.glukhovm.travel;
+package useless;
 
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -11,9 +11,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+
 import java.util.ArrayList;
 import java.util.List;
-import static com.github.glukhovm.travel.ThirdScenario.inputHandler;
+
 
 
 public class TravelBot extends TelegramLongPollingBot {
@@ -46,12 +47,11 @@ public class TravelBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        if(update.hasMessage() && update.getMessage().hasText()){
+        if (update.hasMessage() && update.getMessage().hasText()) {
             Message message = update.getMessage();
             String text = message.getText();
-            if(text.equals("Вариант 3")){
+            if (text.equals("Вариант 3")) {
                 sendMsg(message, "Введи аэропорт вылета!");
-                sendMsg(message, inputHandler(text));
             }
         }
     }
@@ -114,11 +114,11 @@ public class TravelBot extends TelegramLongPollingBot {
 
     @Override
     public String getBotUsername() {
-        return BotConfig.MYBOTNAME;
+        return null;
     }
 
     @Override
     public String getBotToken() {
-        return BotConfig.MYBOTTOKEN;
+        return null;
     }
 }
