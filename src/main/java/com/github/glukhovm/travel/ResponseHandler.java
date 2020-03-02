@@ -2,14 +2,40 @@ package com.github.glukhovm.travel;
 
 public class ResponseHandler {
     boolean correctAnswer = false;
-    private int optionNumber;
+    boolean isFirstVar = true;
+    public int optionNumber;
     private String toSend;
 
-    public String handle(int questionNumber, String userAnswer) {
+    private String dAirport;
+    private String aAirport;
+    private String dTime;
+    private String rTime;
 
-        switch (questionNumber) {
+    public String getDAirport() {
+        return dAirport;
+    }
+
+    public String getAAirport() {
+        return aAirport;
+    }
+
+    public String getDTime() {
+        return dTime;
+    }
+
+    public String getRTime() {
+        return rTime;
+    }
+
+
+    public String askQuestion(int questionNum, String userAnswer) {
+        switch (questionNum) {
             case 0:
                 correctAnswer = false;
+                dAirport = null;
+                aAirport = null;
+                dTime = null;
+                rTime = null;
                 switch (userAnswer) {
                     case "1":
                         optionNumber = 1;
@@ -29,93 +55,74 @@ public class ResponseHandler {
                     default:
                         toSend = "Введи \"1\" или  \"2\" или  \"3\"";
                 }
-                break;
-            case 1: //write dAir
-                correctAnswer = false;
-                    Question dAirQuestion = new Question() {
-                        String temp = null;
-                        @Override
-                        public String askQuestion() {
-                            if(userAnswer.equals("CEK")){
-                                if(optionNumber == 3){
-                                    temp = "Отлично, вот рейсы - //тут билеты";
-                                }
-                                temp = "Введи аэропорт прилета в формате \"NNN\" ";
-                                correctAnswer = true;
-                            } else {
-                                temp = "Пример ввода: CEK";
-                            }
-                            return temp;
-                        }
-                    };
-                    toSend = dAirQuestion.askQuestion();
-                break;
-            case 2: //write aAir
-                correctAnswer = false;
-                if (optionNumber == 1 || optionNumber == 2) {
-                    Question aAirQuestion = new Question() {
-                        String temp = null;
-                        @Override
-                        public String askQuestion() {
-                            if(userAnswer.equals("LED")){
-                                if(optionNumber == 1) {
-                                    temp = "Введите дату вылета в формате dd/mm/yy";
-                                } else {
-                                    temp = "Отлично, вот рейсы - //тут билеты";
-                                }
-                                correctAnswer = true;
-                            } else {
-                                temp = "Пример ввода: LED";
-                            }
-                            return temp;
-                        }
-                    };
-                    toSend = aAirQuestion.askQuestion();
-                }
-                break;
+                return toSend;
 
-            case 3: //write dTime //
+            case 1:
                 correctAnswer = false;
-                if (optionNumber == 1) {
-                    Question aAirQuestion = new Question() {
-                        String temp = null;
-                        @Override
-                        public String askQuestion() {
-                            if(userAnswer.equals("01/08/20")){
-                                temp = "Введите дату прилета в формате dd/mm/yy";
-                                correctAnswer = true;
-                            } else {
-                                temp = "Пример ввода: 01/08/20";
-                            }
-                            return temp;
-                        }
-                    };
-                    toSend = aAirQuestion.askQuestion();
+                if (userAnswer.equals("CEK")) { //TODO correct verification
+                    if (optionNumber != 3) {
+                        dAirport = userAnswer;
+                        toSend = "Введи аэропорт прилета в формате \"NNN\" ";
+                    } else {
+                        dAirport = userAnswer;
+                        toSend = "Отлично, вот рейсы - *TODO*";
+                        //здесь отправляется URL запрос, возращается ответ и в тусенд отправляем инфу по билетам
+                        //TODO URL request code
+                        isFirstVar = false;
+                        correctAnswer = true;
+                    }
+                    correctAnswer = true;
+                } else {
+                    toSend = "Пример ввода: CEK";
                 }
-                break;
+                return toSend;
 
-            case 4: //write aTime
+            case 2:
                 correctAnswer = false;
-                if (optionNumber == 1) {
-                    Question aAirQuestion = new Question() {
-                        String temp = null;
-                        @Override
-                        public String askQuestion() {
-                            if(userAnswer.equals("10/08/20")){
-                                temp = "Отлично, вот рейсы - //тут билеты";
-                                correctAnswer = true;
-                            } else {
-                                temp = "Пример ввода: 10/08/20";
-                            }
-                            return temp;
-                        }
-                    };
-                    toSend = aAirQuestion.askQuestion();
+                if (userAnswer.equals("LED")) { //TODO correct verification
+                    if (optionNumber == 1) {
+                        aAirport = userAnswer;
+                        toSend = "Введите дату вылета в формате dd/mm/yy";
+                    } else {
+                        aAirport = userAnswer;
+                        toSend = "Отлично, вот рейсы - *TODO*";
+                        //здесь отправляется URL запрос, возращается ответ и в тусенд отправляем инфу по билетам
+                        //TODO URL request code
+                        isFirstVar = false;
+                        correctAnswer = true;
+                    }
+                    correctAnswer = true;
+                } else {
+                    toSend = "Пример ввода: LED";
                 }
-                break;
+                return toSend;
 
+            case 3:
+                correctAnswer = false;
+                if (userAnswer.equals("01/08/20")) { //TODO correct verification
+                    dTime = userAnswer;
+                    toSend = "Введите дату прилета в формате dd/mm/yy";
+                    correctAnswer = true;
+                } else {
+                    toSend = "Пример ввода: 01/08/20";
+                }
+                return toSend;
+
+            case 4:
+                correctAnswer = false;
+                if (userAnswer.equals("10/08/20")) { //TODO correct verification
+                    rTime = userAnswer;
+                    toSend = "Отлично, вот рейсы - *TODO*";
+                    //здесь отправляется URL запрос, возращается ответ и в тусенд отправляем инфу по билетам
+                    //TODO URL request code
+                    correctAnswer = true;
+                } else {
+                    toSend = "Пример ввода: 10/08/20";
+                }
+                return toSend;
             default:
                 toSend = "Чтобы начать заново введи /start";
+                isFirstVar = true;
         }
         return toSend;
     }

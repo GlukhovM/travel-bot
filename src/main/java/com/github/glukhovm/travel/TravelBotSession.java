@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 
 
-
 public class TravelBotSession extends TelegramLongPollingSessionBot {
     private final BotProperties properties;
 
@@ -79,11 +78,11 @@ public class TravelBotSession extends TelegramLongPollingSessionBot {
 
     @Override
     public void onUpdateReceived(Update update, Optional<Session> botSession) {
-        //final String toSend;
-        final String startMessage = "Привет, " + update.getMessage().getFrom().getFirstName() + ", выбери один из вариантов: " + "\n" +
-                "1. Поиск билетов из аэропорта в аэропорт с указанием дат вылета и прилета" + "\n" +
-                "2. Поиск билетов из аэропорта в аэропорт без указания дат вылета и прилета" + "\n" +
-                "3. Поиск билетов из аэропорта \"куда-нибуть\"";
+
+        final String startMessage = "Привет, " + update.getMessage().getFrom().getFirstName() + ", выбери один из вариантов поиска: " + "\n" +
+                "1. Из аэропорта в аэропорт с выбором даты вылета и даты возвращения" + "\n" +
+                "2. Из аэропорта в аэропорт без выбора дат" + "\n" +
+                "3. Из аэропорта без выбора дат";
 
         final Message message = update.getMessage();
 
@@ -92,17 +91,22 @@ public class TravelBotSession extends TelegramLongPollingSessionBot {
             botSession.ifPresent(session -> {
                 session.setAttribute("question_number", 0);
             });
-            sendMsg(message, startMessage + "\n" + "\n" + "Если хочешь начать заново введи /start");
+            sendMsg(message, startMessage + "\n" + "Если хочешь начать заново введи /start");
         } else {
             botSession.ifPresent(session -> {
                 ResponseHandler handler = (ResponseHandler) session.getAttribute("handler");
                 session.setAttribute("handler", handler == null ? new ResponseHandler() : handler);
 
                 final Integer questionNumber = (Integer) session.getAttribute("question_number");
-                final String toSend = handler.handle(questionNumber, message.getText());
-                sendMsg(message, toSend + " " + "qNum: " + questionNumber);
-                if(handler.correctAnswer && questionNumber <= 4) {
-                    session.setAttribute("question_number", questionNumber == 0 ? 1 : questionNumber + 1);
+                final String toSend = handler.askQuestion(questionNumber, message.getText());
+                sendMsg(message, toSend + "\n" + /*"qNum: " + questionNumber + " varNum: " + handler.optionNumber + " " + */
+                        handler.getDAirport() + " " + handler.getAAirport() + " " + handler.getDTime() + " " + handler.getRTime());
+                if (handler.correctAnswer && questionNumber <= 4) {
+                    if (handler.isFirstVar) {
+                        session.setAttribute("question_number", questionNumber == 0 ? 1 : questionNumber + 1);
+                    } else {
+                        session.setAttribute("question_number", 5);
+                    }
                 }
             });
         }
