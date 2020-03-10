@@ -1,17 +1,16 @@
 package com.github.glukhovm.travel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
-public class ResponseDto {
+public class SkypickerResponseDto {
     private List<OptionDto> data;
     private String currency;
 
-    public ResponseDto() {
+    public SkypickerResponseDto() {
     }
 
-    public ResponseDto(List<OptionDto> data, String currency) {
+    public SkypickerResponseDto(List<OptionDto> data, String currency) {
         this.data = data;
         this.currency = currency;
     }

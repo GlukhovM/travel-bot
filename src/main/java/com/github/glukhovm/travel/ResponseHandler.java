@@ -1,53 +1,44 @@
 package com.github.glukhovm.travel;
 
+import com.github.glukhovm.travel.enums.OptionNumber;
+import com.github.glukhovm.travel.enums.QuestionNumber;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 public class ResponseHandler {
-    boolean correctAnswer = false;
-    boolean isFirstVar = true;
-    public int optionNumber;
+
+    private boolean correctAnswer = false;
+    private boolean isFirstVar = true;
+    private int optionNumber;
     private String toSend;
 
-    private String dAirport;
-    private String aAirport;
-    private String dTime;
-    private String rTime;
-
-    public String getDAirport() {
-        return dAirport;
+    public boolean isCorrectAnswer() {
+        return correctAnswer;
     }
 
-    public String getAAirport() {
-        return aAirport;
-    }
-
-    public String getDTime() {
-        return dTime;
-    }
-
-    public String getRTime() {
-        return rTime;
+    public boolean isFirstVar() {
+        return isFirstVar;
     }
 
 
-    public String askQuestion(int questionNum, String userAnswer) {
-        switch (questionNum) {
-            case 0:
+    public String askQuestion(int questionNum, String userAnswer, RequestDto requestOptions) {
+        switch (QuestionNumber.byCode(questionNum)) {
+            case OPTION_SELECTION:
                 correctAnswer = false;
-                dAirport = null;
-                aAirport = null;
-                dTime = null;
-                rTime = null;
-                switch (userAnswer) {
-                    case "1":
+                switch (OptionNumber.byCode(userAnswer)) {
+                    case SELECTION_ALL_FOUR_PARAMETERS:
                         optionNumber = 1;
                         correctAnswer = true;
                         toSend = "Введи аэропорт вылета в формате \"NNN\" ";
                         break;
-                    case "2":
+                    case SELECTION_AIRPORTS_ONLY:
                         optionNumber = 2;
                         correctAnswer = true;
                         toSend = "Введи аэропорт вылета в формате \"NNN\" ";
                         break;
-                    case "3":
+                    case SELECTION_DEPARTURE_AIRPORT_ONLY:
                         optionNumber = 3;
                         correctAnswer = true;
                         toSend = "Введи аэропорт вылета в формате \"NNN\" ";
@@ -57,17 +48,16 @@ public class ResponseHandler {
                 }
                 return toSend;
 
-            case 1:
+            case DEPARTURE_AIRPORT_SELECTION:
                 correctAnswer = false;
-                if (userAnswer.equals("CEK")) { //TODO correct verification
+                if (isValidAirport(userAnswer.toUpperCase())) {
                     if (optionNumber != 3) {
-                        dAirport = userAnswer;
+                        requestOptions.setDepartureAirport(userAnswer.toUpperCase());
                         toSend = "Введи аэропорт прилета в формате \"NNN\" ";
                     } else {
-                        dAirport = userAnswer;
-                        toSend = "Отлично, вот рейсы - *TODO*";
-                        //здесь отправляется URL запрос, возращается ответ и в тусенд отправляем инфу по билетам
-                        //TODO URL request code
+                        requestOptions.setDepartureAirport(userAnswer.toUpperCase());
+                        toSend = "Отлично, вот рейсы - " + "\n"
+                                + new SkypickerRequest(requestOptions).getResponse();
                         isFirstVar = false;
                         correctAnswer = true;
                     }
@@ -77,17 +67,16 @@ public class ResponseHandler {
                 }
                 return toSend;
 
-            case 2:
+            case ARRIVAL_AIRPORT_SELECTION:
                 correctAnswer = false;
-                if (userAnswer.equals("LED")) { //TODO correct verification
+                if (isValidAirport(userAnswer.toUpperCase())) {
                     if (optionNumber == 1) {
-                        aAirport = userAnswer;
-                        toSend = "Введите дату вылета в формате dd/mm/yy";
+                        requestOptions.setArrivalAirport(userAnswer.toUpperCase());
+                        toSend = "Введите дату вылета в формате dd/mm/yyyy";
                     } else {
-                        aAirport = userAnswer;
-                        toSend = "Отлично, вот рейсы - *TODO*";
-                        //здесь отправляется URL запрос, возращается ответ и в тусенд отправляем инфу по билетам
-                        //TODO URL request code
+                        requestOptions.setArrivalAirport(userAnswer.toUpperCase());
+                        toSend = "Отлично, вот рейсы - " + "\n"
+                                + new SkypickerRequest(requestOptions).getResponse();
                         isFirstVar = false;
                         correctAnswer = true;
                     }
@@ -97,33 +86,47 @@ public class ResponseHandler {
                 }
                 return toSend;
 
-            case 3:
+            case DEPARTURE_DATE_SELECTION:
                 correctAnswer = false;
-                if (userAnswer.equals("01/08/20")) { //TODO correct verification
-                    dTime = userAnswer;
-                    toSend = "Введите дату прилета в формате dd/mm/yy";
+                if (isValidDate(userAnswer)) {
+                    requestOptions.setDepartureTime(userAnswer);
+                    toSend = "Введите дату возвращения в формате dd/mm/yyyy";
                     correctAnswer = true;
                 } else {
-                    toSend = "Пример ввода: 01/08/20";
+                    toSend = "Пример ввода: 01/08/2020";
                 }
                 return toSend;
 
-            case 4:
+            case RETURN_TIME_SELECTION:
                 correctAnswer = false;
-                if (userAnswer.equals("10/08/20")) { //TODO correct verification
-                    rTime = userAnswer;
-                    toSend = "Отлично, вот рейсы - *TODO*";
-                    //здесь отправляется URL запрос, возращается ответ и в тусенд отправляем инфу по билетам
-                    //TODO URL request code
+                if (isValidDate(userAnswer)) {
+                    requestOptions.setReturnTime(userAnswer);
+                    toSend = "Отлично, вот рейсы - " + "\n"
+                            + new SkypickerRequest(requestOptions).getResponse();
                     correctAnswer = true;
                 } else {
-                    toSend = "Пример ввода: 10/08/20";
+                    toSend = "Пример ввода: 10/08/2020";
                 }
                 return toSend;
-            default:
+            case RESTART_DIALOGUE:
                 toSend = "Чтобы начать заново введи /start";
                 isFirstVar = true;
+                return toSend;
+            default:
+                throw new IllegalStateException(); //TODO read about exception!!!
         }
-        return toSend;
+    }
+
+    public boolean isValidAirport(String userAnswer) {
+        return userAnswer != null && userAnswer.matches("[A-Z]{3}"); //TODO read about regex!!!
+    }
+
+    public boolean isValidDate(String userAnswer) { //TODO read more about LocalDate and add the date ratio validation
+        try {
+            LocalDate.parse(userAnswer, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
     }
 }

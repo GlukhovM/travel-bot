@@ -44,7 +44,6 @@ public class TravelBotSession extends TelegramLongPollingSessionBot {
         SendMessage sendMessage = new SendMessage()
                 .enableMarkdown(true)
                 .setChatId(message.getChatId())
-                //.setReplyToMessageId(message.getMessageId())
                 .setText(text);
         try {
             if ("/start".equals(message.getText())) {
@@ -72,7 +71,6 @@ public class TravelBotSession extends TelegramLongPollingSessionBot {
 
         keyboardRowList.add(keyboardFirstRow);
         replyKeyboardMarkup.setKeyboard(keyboardRowList);
-
     }
 
 
@@ -80,30 +78,32 @@ public class TravelBotSession extends TelegramLongPollingSessionBot {
     public void onUpdateReceived(Update update, Optional<Session> botSession) {
 
         final String startMessage = "Привет, " + update.getMessage().getFrom().getFirstName() + ", выбери один из вариантов поиска: " + "\n" +
-                "1. Из аэропорта в аэропорт с выбором даты вылета и даты возвращения" + "\n" +
+                "1. Из аэропорта в аэропорт с выбором дат вылета и возвращения" + "\n" +
                 "2. Из аэропорта в аэропорт без выбора дат" + "\n" +
                 "3. Из аэропорта без выбора дат";
 
         final Message message = update.getMessage();
 
-
         if ("/start".equals(message.getText())) {
             botSession.ifPresent(session -> {
                 session.setAttribute("question_number", 0);
+                session.setAttribute("request_options", null);
             });
             sendMsg(message, startMessage + "\n" + "Если хочешь начать заново введи /start");
         } else {
             botSession.ifPresent(session -> {
+                session.setAttribute("request_options", session.getAttribute("request_options") == null ? new RequestDto() : session.getAttribute("request_options"));
+                RequestDto RequestDto = (RequestDto) session.getAttribute("request_options");
+
+                session.setAttribute("handler", session.getAttribute("handler") == null ? new ResponseHandler() : session.getAttribute("handler"));
                 ResponseHandler handler = (ResponseHandler) session.getAttribute("handler");
-                session.setAttribute("handler", handler == null ? new ResponseHandler() : handler);
 
                 final Integer questionNumber = (Integer) session.getAttribute("question_number");
-                final String toSend = handler.askQuestion(questionNumber, message.getText());
-                sendMsg(message, toSend + "\n" + /*"qNum: " + questionNumber + " varNum: " + handler.optionNumber + " " + */
-                        handler.getDAirport() + " " + handler.getAAirport() + " " + handler.getDTime() + " " + handler.getRTime());
-                if (handler.correctAnswer && questionNumber <= 4) {
-                    if (handler.isFirstVar) {
-                        session.setAttribute("question_number", questionNumber == 0 ? 1 : questionNumber + 1);
+                final String toSend = handler.askQuestion(questionNumber, message.getText(), RequestDto);
+                sendMsg(message, toSend);
+                if (handler.isCorrectAnswer() && questionNumber <= 4) {
+                    if (handler.isFirstVar()) {
+                        session.setAttribute("question_number", questionNumber + 1);
                     } else {
                         session.setAttribute("question_number", 5);
                     }
@@ -111,30 +111,6 @@ public class TravelBotSession extends TelegramLongPollingSessionBot {
             });
         }
     }
-
-
-    //        final String toSend = botSession.map(session -> {
-//            final String lastMessage = (String) session.getAttribute("last_message");
-//            final String firstMessage = (String) session.getAttribute("first_message");
-//            if (lastMessage != null && firstMessage != null) {
-//                final Integer count = (Integer) session.getAttribute("messages_count");
-//                return "Последнее сообщение: " + lastMessage + "; всего: " + count + " , первое: " + firstMessage;
-//            } else {
-//                return "Привет, " + update.getMessage().getFrom().getFirstName() + "! Нет предыдущих сообщений";
-//            }
-//        }).orElse("Нет предыдущих сообщений");
-//
-//
-//        final Message message = update.getMessage();
-//        botSession.ifPresent(session -> {
-//            final Integer messagesCount = (Integer) session.getAttribute("messages_count");
-//            session.setAttribute("messages_count", messagesCount == null ? 1 : messagesCount + 1);
-//            session.setAttribute("last_message", message.getText());
-//            if(messagesCount == 1) {
-//                session.setAttribute("first_message", message.getText());
-//            }
-//        });
-//        sendMsg(message, toSend);
 
 
     @Override
