@@ -87,19 +87,20 @@ public class TravelBotSession extends TelegramLongPollingSessionBot {
         if ("/start".equals(message.getText())) {
             botSession.ifPresent(session -> {
                 session.setAttribute("question_number", 0);
-                session.setAttribute("request_options", null);
+                session.setAttribute("request_dto", null);
             });
             sendMsg(message, startMessage + "\n" + "Если хочешь начать заново введи /start");
         } else {
             botSession.ifPresent(session -> {
-                session.setAttribute("request_options", session.getAttribute("request_options") == null ? new RequestDto() : session.getAttribute("request_options"));
-                RequestDto RequestDto = (RequestDto) session.getAttribute("request_options");
+                session.setAttribute("request_dto", session.getAttribute("request_dto") == null ? new RequestDto() : session.getAttribute("request_dto"));
+                RequestDto requestDto = (RequestDto) session.getAttribute("request_dto");
 
-                session.setAttribute("handler", session.getAttribute("handler") == null ? new ResponseHandler() : session.getAttribute("handler"));
-                ResponseHandler handler = (ResponseHandler) session.getAttribute("handler");
+                session.setAttribute("handler", session.getAttribute("handler") == null ? new UserResponseHandler() : session.getAttribute("handler"));
+                UserResponseHandler handler = (UserResponseHandler) session.getAttribute("handler");
 
                 final Integer questionNumber = (Integer) session.getAttribute("question_number");
-                final String toSend = handler.askQuestion(questionNumber, message.getText(), RequestDto);
+
+                final String toSend = handler.askQuestion(questionNumber, message.getText(), requestDto);
                 sendMsg(message, toSend);
                 if (handler.isCorrectAnswer() && questionNumber <= 4) {
                     if (handler.isFirstVar()) {

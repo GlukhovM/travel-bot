@@ -2,10 +2,10 @@ package com.github.glukhovm.travel;
 
 public class RequestDto {
 
-    private String departureAirport;
-    private String arrivalAirport;
-    private String departureTime;
-    private String returnTime;
+    private String departureAirport = "";
+    private String arrivalAirport = "";
+    private String departureTime = "";
+    private String returnTime = "";
 
     public String getDepartureAirport() {
         return departureAirport;

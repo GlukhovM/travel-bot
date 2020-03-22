@@ -1,98 +1,76 @@
 package com.github.glukhovm.travel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class SkypickerResponseDto {
-    private List<OptionDto> data;
     private String currency;
+    private List<OptionDto> data;
 
-    public SkypickerResponseDto() {
-    }
-
-    public SkypickerResponseDto(List<OptionDto> data, String currency) {
-        this.data = data;
-        this.currency = currency;
-    }
-
-    public List<OptionDto> getData() {
-        return data;
-    }
-
-    public void setData(List<OptionDto> data) {
-        this.data = data;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
+    public static String epochToUtc(long epochTime) {
+        LocalDateTime localDateTime = LocalDateTime
+                .ofInstant(Instant.ofEpochSecond(epochTime), ZoneId.of("UTC"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String userFriendlyTime = localDateTime.format(formatter);
+        return userFriendlyTime;
     }
 
     @Override
     public String toString() {
-        return "Options= " + data + ", Currency= " + currency;
+        if (data.isEmpty()) {
+            return "Ошибка: Проверь введенные даты!";
+        } else {
+            String tickets = "Цена: " + data.get(0).price + " " + currency + ", маршрут: " + "\n";
+            for (int i = 0; i < data.get(0).getRoute().size(); i++) {
+                tickets += data.get(0).route.get(i).flyFrom + " -> " + data.get(0).route.get(i).flyTo + "\n" +
+                        "Из: " + data.get(0).route.get(i).cityFrom + "\n" +
+                        "Время вылета: " + epochToUtc(data.get(0).route.get(i).dTime) + "\n" +
+                        "в : " + data.get(0).route.get(i).cityTo + "\n" +
+                        "Время прилета: " + epochToUtc(data.get(0).route.get(i).aTime) + "\n" +
+                        "Код авиакомпании: " + data.get(0).route.get(i).airline + "\n" + "\n";
+            }
+            return tickets;
+        }
     }
 
+    //data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
     public static class OptionDto {
         private int price;
+        private List<RouteDto> route;
+    }
+
+    //route
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    public static class RouteDto {
         @JsonProperty("dTime")
         private long dTime;
-        @JsonProperty("fly_duration")
-        private String flyDuration;
-        private List<String> airlines;
-
-        public OptionDto() {
-        }
-
-        public OptionDto(int price, long dTime, String flyDuration, List<String> airlines) {
-            this.price = price;
-            this.dTime = dTime;
-            this.flyDuration = flyDuration;
-            this.airlines = airlines;
-        }
-
-        public int getPrice() {
-            return price;
-        }
-
-        public void setPrice(int price) {
-            this.price = price;
-        }
-
-        public long getDTime() {
-            return dTime;
-        }
-
-        public void setDTime(long dTime) {
-            this.dTime = dTime;
-        }
-
-        public String getFlyDuration() {
-            return flyDuration;
-        }
-
-        public void setFlyDuration(String flyDuration) {
-            this.flyDuration = flyDuration;
-        }
-
-        public List<String> getAirlines() {
-            return airlines;
-        }
-
-        public void setAirlines(List<String> airlines) {
-            this.airlines = airlines;
-        }
-
-        @Override
-        public String toString() {
-            return '{' + "price=" + price +
-                    ", dTime=" + dTime +
-                    ", flyDuration=" + flyDuration +
-                    ", airlines=" + airlines + '}' + "\n";
-        }
+        @JsonProperty("aTime")
+        private long aTime;
+        private String cityFrom;
+        private String cityTo;
+        private String flyFrom;
+        private String flyTo;
+        private String airline;
     }
 }
 

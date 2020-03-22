@@ -11,24 +11,14 @@ import org.apache.http.impl.client.HttpClients;
 
 import java.nio.charset.StandardCharsets;
 
-public class SkypickerRequest {
+public class SkypickerClient {
 
-    private RequestDto requestOptions;
+    private RequestMapper mapper = new RequestMapper();
 
-
-    public SkypickerRequest(RequestDto requestOptions) {
-        this.requestOptions = requestOptions;
-    }
-
-    public String getResponse() {
-        //String requestURL = "https://api.skypicker.com/flights?fly_from="+requestOptions.getDepartureAirport()+"&fly_to=LED&date_from=01/06/2020&date_to=01/07/2020&partner=picky&curr=RUB&limit=1";
-        String requestURL = String.format("https://api.skypicker.com/flights?fly_from=%s&fly_to=%s&date_from=%s&date_to=%s&partner=picky&curr=RUB&limit=1" //Message.Format
-                , requestOptions.getDepartureAirport()
-                , requestOptions.getArrivalAirport()
-                , requestOptions.getDepartureTime()
-                , requestOptions.getReturnTime()
-        );
+    public String getResponse(RequestDto requestDto) {
+        String requestURL = mapper.convertDtoToUrl(requestDto);
         String temp = null;
+
         try (
                 CloseableHttpClient client = HttpClients.createDefault();
                 CloseableHttpResponse response = client.execute(new HttpGet(requestURL))
@@ -38,18 +28,21 @@ public class SkypickerRequest {
                 if (entity != null) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
+                    System.out.println(IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
                     SkypickerResponseDto responseDto = objectMapper.readValue(entity.getContent(), SkypickerResponseDto.class);
-                    System.out.println(responseDto);
                     temp = responseDto.toString();
                 } else {
-                    System.out.println(response.getStatusLine());
+                    temp = "Что-то пошло не так: " + response.getStatusLine();
                 }
             } else {
+                System.out.println(response.getStatusLine());
                 if (entity != null) {
-                    System.out.println("Oh no, Error: " + response.getStatusLine() + "\n" + IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
+                    temp = "Ошибка: Проверь введенные даты!";
+                    if(IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8).contains("Not recognized location")){
+                        temp = "Ошибка: Проверь корректность IATA кода аэропорта!";
+                    }
                 } else {
-                    System.out.println(response.getStatusLine());
+                    temp = "Что-то пошло не так: " + response.getStatusLine();
                 }
             }
         } catch (Exception cause) {

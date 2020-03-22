@@ -7,12 +7,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-public class ResponseHandler {
+public class UserResponseHandler {
 
     private boolean correctAnswer = false;
     private boolean isFirstVar = true;
     private int optionNumber;
     private String toSend;
+    private SkypickerClient skypickerClient = new SkypickerClient();
 
     public boolean isCorrectAnswer() {
         return correctAnswer;
@@ -23,25 +24,26 @@ public class ResponseHandler {
     }
 
 
-    public String askQuestion(int questionNum, String userAnswer, RequestDto requestOptions) {
+    public String askQuestion(int questionNum, String userAnswer, RequestDto requestDto) {
         switch (QuestionNumber.byCode(questionNum)) {
             case OPTION_SELECTION:
                 correctAnswer = false;
+                isFirstVar = true;
                 switch (OptionNumber.byCode(userAnswer)) {
                     case SELECTION_ALL_FOUR_PARAMETERS:
                         optionNumber = 1;
                         correctAnswer = true;
-                        toSend = "Введи аэропорт вылета в формате \"NNN\" ";
+                        toSend = "Введи IATA код аэропорта вылета в формате \"NNN\" ";
                         break;
                     case SELECTION_AIRPORTS_ONLY:
                         optionNumber = 2;
                         correctAnswer = true;
-                        toSend = "Введи аэропорт вылета в формате \"NNN\" ";
+                        toSend = "Введи IATA код аэропорта вылета в формате \"NNN\" ";
                         break;
                     case SELECTION_DEPARTURE_AIRPORT_ONLY:
                         optionNumber = 3;
                         correctAnswer = true;
-                        toSend = "Введи аэропорт вылета в формате \"NNN\" ";
+                        toSend = "Введи IATA код аэропорта вылета в формате \"NNN\" ";
                         break;
                     default:
                         toSend = "Введи \"1\" или  \"2\" или  \"3\"";
@@ -52,16 +54,15 @@ public class ResponseHandler {
                 correctAnswer = false;
                 if (isValidAirport(userAnswer.toUpperCase())) {
                     if (optionNumber != 3) {
-                        requestOptions.setDepartureAirport(userAnswer.toUpperCase());
-                        toSend = "Введи аэропорт прилета в формате \"NNN\" ";
+                        requestDto.setDepartureAirport(userAnswer.toUpperCase());
+                        toSend = "Введи IATA код аэропорта прилета в формате \"NNN\" ";
+                        correctAnswer = true;
                     } else {
-                        requestOptions.setDepartureAirport(userAnswer.toUpperCase());
-                        toSend = "Отлично, вот рейсы - " + "\n"
-                                + new SkypickerRequest(requestOptions).getResponse();
+                        requestDto.setDepartureAirport(userAnswer.toUpperCase());
+                        toSend = skypickerClient.getResponse(requestDto); //ticket request
                         isFirstVar = false;
                         correctAnswer = true;
                     }
-                    correctAnswer = true;
                 } else {
                     toSend = "Пример ввода: CEK";
                 }
@@ -71,16 +72,15 @@ public class ResponseHandler {
                 correctAnswer = false;
                 if (isValidAirport(userAnswer.toUpperCase())) {
                     if (optionNumber == 1) {
-                        requestOptions.setArrivalAirport(userAnswer.toUpperCase());
+                        requestDto.setArrivalAirport(userAnswer.toUpperCase());
                         toSend = "Введите дату вылета в формате dd/mm/yyyy";
+                        correctAnswer = true;
                     } else {
-                        requestOptions.setArrivalAirport(userAnswer.toUpperCase());
-                        toSend = "Отлично, вот рейсы - " + "\n"
-                                + new SkypickerRequest(requestOptions).getResponse();
+                        requestDto.setArrivalAirport(userAnswer.toUpperCase());
+                        toSend = skypickerClient.getResponse(requestDto); //ticket request
                         isFirstVar = false;
                         correctAnswer = true;
                     }
-                    correctAnswer = true;
                 } else {
                     toSend = "Пример ввода: LED";
                 }
@@ -89,7 +89,7 @@ public class ResponseHandler {
             case DEPARTURE_DATE_SELECTION:
                 correctAnswer = false;
                 if (isValidDate(userAnswer)) {
-                    requestOptions.setDepartureTime(userAnswer);
+                    requestDto.setDepartureTime(userAnswer);
                     toSend = "Введите дату возвращения в формате dd/mm/yyyy";
                     correctAnswer = true;
                 } else {
@@ -100,9 +100,8 @@ public class ResponseHandler {
             case RETURN_TIME_SELECTION:
                 correctAnswer = false;
                 if (isValidDate(userAnswer)) {
-                    requestOptions.setReturnTime(userAnswer);
-                    toSend = "Отлично, вот рейсы - " + "\n"
-                            + new SkypickerRequest(requestOptions).getResponse();
+                    requestDto.setReturnTime(userAnswer);
+                    toSend = skypickerClient.getResponse(requestDto); //ticket request
                     correctAnswer = true;
                 } else {
                     toSend = "Пример ввода: 10/08/2020";
@@ -113,15 +112,15 @@ public class ResponseHandler {
                 isFirstVar = true;
                 return toSend;
             default:
-                throw new IllegalStateException(); //TODO read about exception!!!
+                throw new IllegalStateException();
         }
     }
 
     public boolean isValidAirport(String userAnswer) {
-        return userAnswer != null && userAnswer.matches("[A-Z]{3}"); //TODO read about regex!!!
+        return userAnswer != null && userAnswer.matches("[A-Z]{3}");
     }
 
-    public boolean isValidDate(String userAnswer) { //TODO read more about LocalDate and add the date ratio validation
+    public boolean isValidDate(String userAnswer) {
         try {
             LocalDate.parse(userAnswer, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             return true;
