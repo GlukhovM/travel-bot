@@ -12,8 +12,7 @@ public class UserResponseHandler {
     private boolean correctAnswer = false;
     private boolean isFirstVar = true;
     private int optionNumber;
-    private String toSend;
-    private SkypickerClient skypickerClient = new SkypickerClient();
+    private final SkypickerClient skypickerClient = new SkypickerClient();
 
     public boolean isCorrectAnswer() {
         return correctAnswer;
@@ -25,6 +24,7 @@ public class UserResponseHandler {
 
 
     public String askQuestion(int questionNum, String userAnswer, RequestDto requestDto) {
+        String toSend;
         switch (QuestionNumber.byCode(questionNum)) {
             case OPTION_SELECTION:
                 correctAnswer = false;

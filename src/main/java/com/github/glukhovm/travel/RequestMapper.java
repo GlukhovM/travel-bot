@@ -21,7 +21,7 @@ public class RequestMapper {
 
         String returnFrom = requestDto.getReturnTime();
 
-        String requestURL = MessageFormat.format("https://api.skypicker.com/flights?" +
+        return MessageFormat.format("https://api.skypicker.com/flights?" +
                         "fly_from={0}&" + //required
                         "fly_to={1}&" +
                         "date_from={2}&" + //required
@@ -35,6 +35,5 @@ public class RequestMapper {
                 , dateTo
                 , returnFrom
         );
-        return requestURL;
     }
 }

@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 
 public class SkypickerClient {
 
-    private RequestMapper mapper = new RequestMapper();
+    private final RequestMapper mapper = new RequestMapper();
 
     public String getResponse(RequestDto requestDto) {
         String requestURL = mapper.convertDtoToUrl(requestDto);

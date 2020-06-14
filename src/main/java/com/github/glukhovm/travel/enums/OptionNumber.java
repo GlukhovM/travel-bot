@@ -7,7 +7,7 @@ public enum  OptionNumber {
     UNKNOWN_OPTION(null);
 
 
-    private String optionNumber;
+    private final String optionNumber;
 
     OptionNumber(String optionNumber) {
         this.optionNumber = optionNumber;

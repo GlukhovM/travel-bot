@@ -20,12 +20,11 @@ public class SkypickerResponseDto {
     private String currency;
     private List<OptionDto> data;
 
-    public static String epochToUtc(long epochTime) { //DateUtil named!!!
+    public static String epochToUtc(long epochTime) {
         LocalDateTime localDateTime = LocalDateTime
                 .ofInstant(Instant.ofEpochSecond(epochTime), ZoneId.of("UTC"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        String userFriendlyTime = localDateTime.format(formatter);
-        return userFriendlyTime;
+        return localDateTime.format(formatter);
     }
 
     @Override
@@ -33,16 +32,24 @@ public class SkypickerResponseDto {
         if (data.isEmpty()) {
             return "Ошибка: Проверь введенные даты!";
         } else {
-            String tickets = "Цена: " + data.get(0).price + " " + currency + ", маршрут: " + "\n";
+            StringBuilder tickets = new StringBuilder("Цена: " + data.get(0).price + " " + currency + ", маршрут: " + "\n");
             for (int i = 0; i < data.get(0).getRoute().size(); i++) {
-                tickets += data.get(0).route.get(i).flyFrom + " -> " + data.get(0).route.get(i).flyTo + "\n" +
-                        "Из: " + data.get(0).route.get(i).cityFrom + "\n" +
-                        "Время вылета: " + epochToUtc(data.get(0).route.get(i).dTime) + "\n" +
-                        "в : " + data.get(0).route.get(i).cityTo + "\n" +
-                        "Время прилета: " + epochToUtc(data.get(0).route.get(i).aTime) + "\n" +
-                        "Код авиакомпании: " + data.get(0).route.get(i).airline + "\n" + "\n";
+                tickets.append(data.get(0).route.get(i).flyFrom)
+                        .append(" -> ")
+                        .append(data.get(0).route.get(i).flyTo)
+                        .append("\n").append("Из: ")
+                        .append(data.get(0).route.get(i).cityFrom)
+                        .append("\n").append("Время вылета: ")
+                        .append(epochToUtc(data.get(0).route.get(i).dTime))
+                        .append("\n").append("в : ")
+                        .append(data.get(0).route.get(i).cityTo)
+                        .append("\n").append("Время прилета: ")
+                        .append(epochToUtc(data.get(0).route.get(i).aTime))
+                        .append("\n").append("Код авиакомпании: ")
+                        .append(data.get(0).route.get(i).airline)
+                        .append("\n").append("\n");
             }
-            return tickets;
+            return tickets.toString();
         }
     }
 

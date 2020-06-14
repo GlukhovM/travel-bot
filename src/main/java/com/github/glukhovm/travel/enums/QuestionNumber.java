@@ -6,9 +6,10 @@ public enum  QuestionNumber {
     ARRIVAL_AIRPORT_SELECTION(2),
     DEPARTURE_DATE_SELECTION(3),
     RETURN_TIME_SELECTION(4),
-    RESTART_DIALOGUE(5);
+    RESTART_DIALOGUE(5),
+    UNKNOWN_OPTION(-1);
 
-    private int questionNumber;
+    private final int questionNumber;
 
     QuestionNumber(int optionNumber) {
         this.questionNumber = optionNumber;
@@ -20,6 +21,6 @@ public enum  QuestionNumber {
                 return value;
             }
         }
-        return null;
+        return UNKNOWN_OPTION;
     }
 }
