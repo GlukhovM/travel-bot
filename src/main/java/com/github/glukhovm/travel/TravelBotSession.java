@@ -112,7 +112,7 @@ public class TravelBotSession extends TelegramLongPollingSessionBot {
                 });
             }
         } catch (Exception e) {
-            sendMsg(message, "Нажмите /start!");
+            sendMsg(message, "Произошла ошибка. Нажмите /start!");
         }
     }
 
