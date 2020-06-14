@@ -20,7 +20,7 @@ public class SkypickerResponseDto {
     private String currency;
     private List<OptionDto> data;
 
-    public static String epochToUtc(long epochTime) {
+    public static String epochToUtc(long epochTime) { //DateUtil named!!!
         LocalDateTime localDateTime = LocalDateTime
                 .ofInstant(Instant.ofEpochSecond(epochTime), ZoneId.of("UTC"));
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
