@@ -28,7 +28,6 @@ public class SkypickerClient {
                 if (entity != null) {
                     ObjectMapper objectMapper = new ObjectMapper();
                     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                    System.out.println(IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
                     SkypickerResponseDto responseDto = objectMapper.readValue(entity.getContent(), SkypickerResponseDto.class);
                     temp = responseDto.toString();
                 } else {
