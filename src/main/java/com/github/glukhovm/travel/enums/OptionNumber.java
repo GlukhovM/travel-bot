@@ -3,7 +3,9 @@ package com.github.glukhovm.travel.enums;
 public enum  OptionNumber {
     SELECTION_ALL_FOUR_PARAMETERS("1"),
     SELECTION_AIRPORTS_ONLY("2"),
-    SELECTION_DEPARTURE_AIRPORT_ONLY("3");
+    SELECTION_DEPARTURE_AIRPORT_ONLY("3"),
+    UNKNOWN_OPTION(null);
+
 
     private String optionNumber;
 
@@ -17,6 +19,6 @@ public enum  OptionNumber {
             return value;
             }
         }
-        return null;
+        return UNKNOWN_OPTION;
     }
 }
